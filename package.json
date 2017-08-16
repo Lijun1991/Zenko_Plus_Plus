@@ -1,5 +1,5 @@
 {
-  "name": "zenko-memcached-module",
+  "name": "GCS",
   "engines": {
     "node": "6.9.5"
   },
@@ -7,34 +7,99 @@
   "description": "Overrides default MD backend by memcached",
   "main": "index.js",
   "scripts": {
-    "ft_test": "mocha tests/functional",
     "lint": "eslint $(git ls-files '*.js')",
     "start_mdserver": "node mdserver.js",
     "start_dataserver": "node dataserver.js",
-    "test": "mocha tests/unit",
-    "start": ""
+    "start": "npm-run-all --parallel start_mdserver start_dataserver",
+    "unit-test": "ava -T 20s --verbose test/*.test.js",
+    "system-test": "ava -T 20s --verbose system-test/*.test.js",
+    "test": "npm run unit-test && npm run system-test"
   },
-  "repository": "vrancurel/zenko-memcached-module",
+  "repository": "ach5910/Zenko_Plus_Plus",
   "keywords": [
     "zk",
     "monitoring"
   ],
-  "author": "Vianney Rancurel",
+  "author": "Aaron Hunt",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/zenko-memcached-module/issues"
+    "url": "https://github.com/ach5910/Zenko_Plus_Plus.git#issues"
   },
-  "homepage": "https://github.com/zenko-memcached-module#readme",
+  "homepage": "https://github.com/ach5910/Zenko_Plus_Plus#readme",
   "devDependencies": {
     "mocha": "",
     "eslint": "^2.4.0",
     "eslint-config-airbnb": "^6.0.0",
     "eslint-config-scality": "scality/Guidelines",
-    "eslint-plugin-react": "4.2.3"
+    "eslint-plugin-react": "4.2.3",
+    "@google-cloud/nodejs-repo-tools": "1.4.16",
+    "ava": "0.21.0",
+    "proxyquire": "1.8.0",
+    "sinon": "3.0.0",
+    "uuid": "3.1.0"
   },
   "dependencies": {
-    "memcached": "~2.2.2",
+    "@google-cloud/storage": "1.2.1",
     "arsenal": "scality/Arsenal",
-    "werelogs": "scality/werelogs"
+    "async": "^2.5.0",
+    "aws-sdk": "^2.99.0",
+    "commander": "^2.11.0",
+    "googleapis": "20.1.0",
+    "memcached": "~2.2.2",
+    "moment": "2.18.1",
+    "npm-run-all": "^4.0.2",
+    "safe-buffer": "5.1.1",
+    "werelogs": "scality/werelogs",
+    "yargs": "8.0.2",
+    "bucketclient": "scality/bucketclient",
+    "ioredis": "2.4.0",
+    "node-uuid": "^1.4.3",
+    "sproxydclient": "scality/sproxydclient",
+    "utapi": "scality/utapi",
+    "utf8": "~2.1.1",
+    "vaultclient": "scality/vaultclient",
+    "xml2js": "~0.4.16"
+  },
+  "cloud-repo-tools": {
+    "requiresKeyFile": true,
+    "requiresProjectId": true,
+    "product": "storage",
+    "samples": [
+      {
+        "id": "acl",
+        "name": "ACL (Access Control Lists)",
+        "file": "acl.js",
+        "docs_link": "https://cloud.google.com/storage/docs/access-control/create-manage-lists",
+        "usage": "node acl.js --help"
+      },
+      {
+        "id": "buckets",
+        "name": "Buckets",
+        "file": "buckets.js",
+        "docs_link": "https://cloud.google.com/storage/docs",
+        "usage": "node buckets.js --help"
+      },
+      {
+        "id": "encryption",
+        "name": "Encryption",
+        "file": "encryption.js",
+        "docs_link": "https://cloud.google.com/storage/docs",
+        "usage": "node encryption.js --help"
+      },
+      {
+        "id": "files",
+        "name": "Files",
+        "file": "files.js",
+        "docs_link": "https://cloud.google.com/storage/docs",
+        "usage": "node files.js --help"
+      },
+      {
+        "id": "transfer",
+        "name": "Storage Transfer API",
+        "file": "transfer.js",
+        "docs_link": "https://cloud.google.com/storage/transfer",
+        "usage": "node transfer.js --help"
+      }
+    ]
   }
 }

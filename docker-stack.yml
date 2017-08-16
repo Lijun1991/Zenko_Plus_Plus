@@ -3,36 +3,39 @@
 version: "3.1"
 
 services:
-  s3-data:
-    image: ach5910/zenko-plus-plus
-    ports:
-      - "9990"
-    networks:
-      - backend
-    environment:
-      S3DATAPATH: /data
-      LISTEN_ADDR: 0.0.0.0
-    command: npm run start_dataserver
-    deploy:
-      placement:
-        constraints:
-          - node.labels.io.zenko.type == storage
-
-  s3-metadata:
+  gcs-data:
     image: ach5910/zenko-plus-plus
     ports:
       - "9991"
     networks:
       - backend
     environment:
-      S3METADATAPATH: /metadata
+      S3DATAPATH: /data
       LISTEN_ADDR: 0.0.0.0
-    command: npm run start_mdserver
+    secrets: 
+      - gcs-credentials
+    command: npm run start_dataserver
     deploy:
       placement:
         constraints:
           - node.labels.io.zenko.type == storage
 
+  gcs-metadata:
+    image: ach5910/zenko-plus-plus
+    ports:
+      - "9990"
+    networks:
+      - backend
+    environment:
+      S3METADATAPATH: /metadata
+      LISTEN_ADDR: 0.0.0.0
+    secrets: 
+      - gcs-credentials
+    command: npm run start_mdserver
+    deploy:
+      placement:
+        constraints:
+          - node.labels.io.zenko.type == storage
   s3-front:
     image: scality/s3server
     ports:
@@ -41,16 +44,16 @@ services:
       - backend
       - frontend-dmz
     environment:
-      DATA_HOST: s3-data
-      METADATA_HOST: s3-metadata
+      DATA_HOST: gcs-data
+      METADATA_HOST: gcs-metadata
       REDIS_HOST: cache
       ENDPOINT: "${ENDPOINT:-zenko}"
     secrets:
       - s3-credentials
     command: npm run start_s3server
     depends_on:
-      - s3-data
-      - s3-metadata
+      - gcs-data
+      - gcs-metadata
       - cache
     deploy:
       mode: replicated
@@ -92,4 +95,6 @@ networks:
 
 secrets:
   s3-credentials:
+    file: ./secrets.txt
+  gcs-credentials:
     file: ./secrets.txt

@@ -1,5 +1,5 @@
 FROM node:6-slim
-MAINTAINER Vianney Rancurel <vr@scality.com>
+MAINTAINER Aaron Hunt <ach5910@gmail.com>
 
 WORKDIR /usr/src/app
 

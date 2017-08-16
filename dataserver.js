@@ -1,3 +1,19 @@
+'use strict'; // eslint-disable-line strict
+
+const arsenal = require('arsenal');
+const werelogs = require('werelogs');
+const Memcached = require('memcached');
+
+const SUBLEVEL_SEP = '::';
+const MEMCACHED_LIFETIME = 100000;
+
+const logOptions = {
+    "logLevel": "debug",
+    "dumpLevel": "error"
+};
+
+const logger = new werelogs.Logger('Zenko-Memcached');
+
 class MemcachedFileStore extends arsenal.storage.data.file.DataFileStore {
     constructor(dataConfig, logApi) {
 	super(dataConfig, logApi);
@@ -5,12 +21,15 @@ class MemcachedFileStore extends arsenal.storage.data.file.DataFileStore {
     }
 
     setup(callback) {
-	console.log('data setup');
+    console.log('data setup');
 	callback(null);
     }
 
     put(dataStream, size, log, callback) {
-	console.log('data put');
+    console.log('data put');
+    console.log(dataStream);
+    console.log(size);
+    console.log(log);
     }
 
     stat(key, log, callback) {

@@ -16,7 +16,7 @@ const levelNet = arsenal.network.level;
 const WGM = require('../arsenal/lib/versioning/WriteGatheringManager');
 const WriteCache = require('../arsenal/lib/versioning/WriteCache');
 const VRP = require('../arsenal/lib/versioning/VersioningRequestProcessor');
-// const google_make_bucket = require('google_make_bucket');
+const bucketTools = require('./google_make_bucket');
 
 const ROOT_DB = 'rootDB';
 const SYNC_OPTIONS = { sync: true };
@@ -120,7 +120,6 @@ mdServer.initMetadataService = function () {
 	const vrp = new VRP(writeCache, wgm, this.versioning);
 
 
-	// if (dbService.registerAsyncAPI.put
 	dbService.registerAsyncAPI({
 		put: (env, key, value, options, cb) => {
 			// console.log('metadata put hahahah\n');
@@ -129,10 +128,14 @@ mdServer.initMetadataService = function () {
 			console.log('dbName is:',dbName);
 			vrp.put({ db: dbName, key, value, options },
 					env.requestLogger, cb);
-			// if (dbName === "users..bucket"){
-			// 	console.log('metadata put, dbname users..bucket, we are here....\n');
-			// 	google_make_bucket(key);
-			// }
+			//console.log('comparing "',dbName.toString(),'" to ', '"users..bucket"');
+			if (dbName === 'users..bucket'){
+				console.log('metadata put, dbname users..bucket, we are here....\n');
+				var bucket_name = key.split('.');
+				var name = bucket_name[bucket_name.length - 1];
+				console.log(name);
+				bucketTools(name);
+			}
 		},
 		del: (env, key, options, cb) => {
 			const dbName = env.subLevel.join(SUBLEVEL_SEP);

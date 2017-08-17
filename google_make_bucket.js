@@ -8,14 +8,16 @@ const storage = Storage({projectId: projectId});
 
 function google_make_bucket (bucket)
 {
-    storage.createBucket(bucket)
+    console.log('entering google make\n', bucket);
+    storage.createBucket(bucket.toString())
     .then(() => {
         console.log(`Bucket ${bucket} created.`);
     })
     .catch((err) => {
         console.error('ERROR:', err);
     });
-    return true;
+    console.log('exiting google make bucket\n', bucket);
+    //return true;
 }
 
 // google_make_bucket("test_bucketblalabla");

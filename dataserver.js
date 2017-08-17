@@ -19,7 +19,7 @@ const logger = new werelogs.Logger('Zenko-Memcached');
 class MemcachedFileStore extends arsenal.storage.data.file.DataFileStore {
     constructor(dataConfig, logApi) {
 	super(dataConfig, logApi);
-	console.log('filestore constructor');
+	console.log('data --- filestore constructor');
     }
 
     setup(callback) {
@@ -29,9 +29,9 @@ class MemcachedFileStore extends arsenal.storage.data.file.DataFileStore {
 
     put(dataStream, size, log, callback) {
     console.log('data put');
-    console.log(dataStream);
-    console.log(size);
-    console.log(log);
+    console.log('dataStream is:\n', dataStream);
+    console.log('size is:\n', size);
+    console.log('log is:\n',log);
     }
 
     // var gcs = storage({
@@ -84,10 +84,15 @@ class MemcachedFileStore extends arsenal.storage.data.file.DataFileStore {
 const dataServer = new arsenal.network.rest.RESTServer(
     { bindAddress: '0.0.0.0',
       port: 9991,
-      dataStore: new arsenal.storage.data.file.DataFileStore(
-        { dataPath: config.dataDaemon.dataPath,
-          log: config.log }),
-    log: config.log });
+      dataStore: new MemcachedFileStore(
+        { dataPath: '/tmp',
+          log: logOptions }),
+    log: logOptions });
+      
+    //   new arsenal.storage.data.file.DataFileStore(
+    //     { dataPath: config.dataDaemon.dataPath,
+    //       log: config.log }),
+    // log: config.log });
 
 dataServer.setup(err => {
     if (err) {

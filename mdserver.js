@@ -121,7 +121,8 @@ mdServer.initMetadataService = function () {
 
 	dbService.registerAsyncAPI({
 		put: (env, key, value, options, cb) => {
-			console.log('put hahahah');
+			console.log('\nvalue lenght\n', Object.keys(value).length, '\n\n');
+			console.log('metadata put hahahah\n', 'env is \n', env, '\n','key is \n', key, '\n', 'value is \n', value, '\n', 'options is \n', options, '\n', 'cb is \n', cb);
 			const dbName = env.subLevel.join(SUBLEVEL_SEP);
 			vrp.put({ db: dbName, key, value, options },
 					env.requestLogger, cb);
@@ -132,7 +133,7 @@ mdServer.initMetadataService = function () {
 					env.requestLogger, cb);
 		},
 		get: (env, key, options, cb) => {
-			console.log('get hahahah');
+			console.log('metadata getttt hahahah\n', 'env is \n', env, '\n', 'key is \n', key,'\n', 'options is \n', options, '\n', 'cb is \n', cb);
 			const dbName = env.subLevel.join(SUBLEVEL_SEP);
 			vrp.get({ db: dbName, key, options },
 					env.requestLogger, cb);

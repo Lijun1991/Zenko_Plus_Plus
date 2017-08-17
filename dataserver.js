@@ -16,7 +16,7 @@ const logOptions = {
 
 const logger = new werelogs.Logger('Zenko-Memcached');
 
-class MemcachedFileStore extends arsenal.storage.data.file.DataFileStore {
+class GoogleFileStore extends arsenal.storage.data.file.DataFileStore {
     constructor(dataConfig, logApi) {
 	super(dataConfig, logApi);
 	console.log('data --- filestore constructor');
@@ -27,13 +27,28 @@ class MemcachedFileStore extends arsenal.storage.data.file.DataFileStore {
 	callback(null);
     }
 
-    put(dataStream, size, log, callback) {
-    console.log('data --- data put');
-    console.log('data --- dataStream is:\n', dataStream);
-    console.log('data --- size is:\n', size);
-    console.log('data --- log is:\n',log);
-    }
 
+    put(dataStream, size, log, callback) {
+        var data = '';
+        var chunk;
+        dataStream.on('readable', function() {
+            while ((chunk=dataStream.read()) != null) {
+                data += chunk;
+            }
+        });
+        
+        dataStream.on('end', function() {
+            console.log(data);
+            // data.pip('./uploud_file');
+
+        // console.log('data --- data put');
+        // console.log('data --- dataStream is:\n', dataStream);
+        // console.log('data --- size is:\n', size);
+        // console.log('data --- log is:\n',log);
+         });
+         log.debug('starting to write data', { method: 'put', key, filePath });
+         console.log(filePath);
+        }
     // var gcs = storage({
     //     projectId: 'grape-spaceship-123',
     //     keyFilename: '/path/to/keyfile.json'
@@ -84,7 +99,7 @@ class MemcachedFileStore extends arsenal.storage.data.file.DataFileStore {
 const dataServer = new arsenal.network.rest.RESTServer(
     { bindAddress: '0.0.0.0',
       port: 9991,
-      dataStore: new MemcachedFileStore(
+      dataStore: new GoogleFileStore(
         { dataPath: '/tmp',
           log: logOptions }),
     log: logOptions });

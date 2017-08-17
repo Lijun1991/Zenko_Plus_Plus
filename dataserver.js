@@ -36,18 +36,24 @@ class GoogleFileStore extends arsenal.storage.data.file.DataFileStore {
                 data += chunk;
             }
         });
-        
-        dataStream.on('end', function() {
-            console.log(data);
-            // data.pip('./uploud_file');
 
-        // console.log('data --- data put');
-        // console.log('data --- dataStream is:\n', dataStream);
-        // console.log('data --- size is:\n', size);
-        // console.log('data --- log is:\n',log);
-         });
-         log.debug('starting to write data', { method: 'put', key, filePath });
-         console.log(filePath);
+        var fs = require('fs');
+        var wstream = fs.createWriteStream('myOutput.txt');
+        dataStream.pipe(wstream);
+        dataStream.close;
+        console.log('\n\n\nyaya, i did it\n\n\n');
+        
+        // dataStream.on('end', function() {
+        //     console.log(data);
+        //     // data.pip('./uploud_file');
+
+        // // console.log('data --- data put');
+        // // console.log('data --- dataStream is:\n', dataStream);
+        // // console.log('data --- size is:\n', size);
+        // // console.log('data --- log is:\n',log);
+        //  });
+        //  log.debug('starting to write data', { method: 'put', key, filePath });
+        //  console.log(filePath);
         }
     // var gcs = storage({
     //     projectId: 'grape-spaceship-123',

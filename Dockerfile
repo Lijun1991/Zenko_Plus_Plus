@@ -14,7 +14,6 @@ RUN apt-get update \
     && rm -rf ~/.node-gyp \
     && rm -rf /tmp/npm-*
 
-
 CMD [ "npm", "start" ]
 
 EXPOSE 8000

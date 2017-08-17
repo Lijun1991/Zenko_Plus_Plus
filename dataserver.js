@@ -3,6 +3,7 @@
 const arsenal = require('arsenal');
 const werelogs = require('werelogs');
 const Memcached = require('memcached');
+var storage = require('@google-cloud/storage');
 
 const SUBLEVEL_SEP = '::';
 const MEMCACHED_LIFETIME = 100000;
@@ -32,6 +33,34 @@ class MemcachedFileStore extends arsenal.storage.data.file.DataFileStore {
     console.log(log);
     }
 
+    // var gcs = storage({
+    //     projectId: 'grape-spaceship-123',
+    //     keyFilename: '/path/to/keyfile.json'
+    //   });
+      
+    //   // Create a new bucket.
+    //   gcs.createBucket('my-new-bucket', function(err, bucket) {
+    //     if (!err) {
+    //       // "my-new-bucket" was successfully created.
+    //     }
+    //   });
+      
+    //   // Reference an existing bucket.
+    //   var bucket = gcs.bucket('my-existing-bucket');
+      
+    //   // Upload a local file to a new file to be created in your bucket.
+    //   bucket.upload('/photos/zoo/zebra.jpg', function(err, file) {
+    //     if (!err) {
+    //       // "zebra.jpg" is now in your bucket.
+    //     }
+    //   });
+      
+    //   // Download a file from your bucket.
+    //   bucket.file('giraffe.jpg').download({
+    //     destination: '/photos/zoo/giraffe.jpg'
+    //   }, function(err) {});
+      
+
     stat(key, log, callback) {
 	console.log('data stat');
     }
@@ -48,6 +77,8 @@ class MemcachedFileStore extends arsenal.storage.data.file.DataFileStore {
 	console.log('data getDiskUsage');
     }
 }
+
+
 
 const dataServer = new arsenal.network.rest.RESTServer(
     { bindAddress: '0.0.0.0',

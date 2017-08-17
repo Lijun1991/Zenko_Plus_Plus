@@ -1,4 +1,4 @@
-    'use strict'; // eslint-disable-line strict
+'use strict'; // eslint-disable-line strict
 
 const arsenal = require('arsenal');
 const werelogs = require('werelogs');
@@ -14,8 +14,7 @@ const logOptions = {
 
 const logger = new werelogs.Logger('Zenko-Memcached');
 
-const MetadataFileServer =
-require('arsenal').storage.metadata.MetadataFileServer;
+const MetadataFileServer = require('arsenal').storage.metadata.MetadataFileServer;
 
 const mdServer = new MetadataFileServer(
 { bindAddress: '0.0.0.0',
@@ -30,93 +29,88 @@ log: logOptions });
 var memcached = new Memcached('localhost:11211', {retries:10,retry:10000,remove:true,failOverServers:['192.168.0.103:11211']});
 
 class MemcachedService extends arsenal.network.rpc.BaseService {
-constructor(params) {
-super(params);
-this.addRequestInfoConsumer((dbService, reqParams) => {
-  const env = {};
-  env.subLevel = reqParams.subLevel;
-return env;
-});
-}
+    constructor(params) {
+	super(params);
+	this.addRequestInfoConsumer((dbService, reqParams) => {
+            const env = {};
+            env.subLevel = reqParams.subLevel;
+	    return env;
+	});
+    }
 }
 
 mdServer.initMetadataService = function ()
 {
-const dbService = new MemcachedService({
-namespace: '/MDFile/metadata',
-logger: logger
-});
-this.services.push(dbService);
-
-dbService.registerAsyncAPI({
-    put: (env, key, value, options, cb) => {
-        const dbName = env.subLevel.join(SUBLEVEL_SEP);
-        console.log("\n\n\n\nin her\n\n\n\n\n");
-
-        console.log('put',env,dbName,key,value,options);
-    /*	    memcached.get(dbName, (err, data) => {
-    if (err) {
-    console.log(err);
-    let db = {};
-    db[key] = value;
-    memcached.add(dbName, JSON.stringify(db), MEMCACHED_LIFETIME, 
-            (err) => {
-                if (err) {
-                console.log(err);
-                cb(err);
-                } else {
-                cb(null);
-                }
-            });
-    } else {
-    console.log(data);
-    let db = JSON.parse(data);
-    db[key] = value;
-    memcached.replace(dbName, JSON.stringifyß(db), MEMCACHED_LIFETIME, 
-                (err) => {
-                if (err) {
-                    console.log(err);
-                    cb(err);
-                } else {
-                    cb(null);
-                }
-                });
-    }
-    });*/
-        return cb();
-    },
-    del: (env, key, options, cb) => {
-        console.log('del',env,key,options);
-        return cb();
-    },
-    get: (env, key, options, cb) => {
-        console.log('get',key,options);
-    /*	    memcached.get(dbName, (err, data) => {
-    if (err) {
-    console.log(err);
-    } else {
-    console.log(data);
-    let db = JSON.parse(data);
-    cb(null, db[key])
-    }
+    const dbService = new MemcachedService({
+	namespace: '/MDFile/metadata',
+	logger: logger
     });
-    */
-        return cb();
-    },
-    getDiskUsage: (env, cb) => {
-        console.log('getDiskUsage',env);
-        return (cb());
-    },
-});
+    this.services.push(dbService);
 
-dbService.registerSyncAPI({
-    createReadStream:
-    (env, options) => {
-    console.log('createReadStream');
+    dbService.registerAsyncAPI({
+        put: (env, key, value, options, cb) => {
+	    const dbName = env.subLevel.join(SUBLEVEL_SEP);
+	    console.log('lolololput',env,dbName,key,value,options);
+/*	    memcached.get(dbName, (err, data) => {
+		if (err) {
+		    console.log(err);
+		    let db = {};
+		    db[key] = value;
+		    memcached.add(dbName, JSON.stringify(db), MEMCACHED_LIFETIME, 
+				  (err) => {
+				      if (err) {
+					  console.log(err);
+					  cb(err);
+				      } else {
+					  cb(null);
+				      }
+				  });
+		} else {
+		    console.log(data);
+		    let db = JSON.parse(data);
+		    db[key] = value;
+		    memcached.replace(dbName, JSON.stringify(db), MEMCACHED_LIFETIME, 
+				      (err) => {
+					  if (err) {
+					      console.log(err);
+					      cb(err);
+					  } else {
+					      cb(null);
+					  }
+				      });
+		}
+		});*/
+			return cb();
+        },
+        del: (env, key, options, cb) => {
+	    console.log('del',env,key,options);
+        },
+        get: (env, key, options, cb) => {
+	    console.log('hahahhaget',key,options);
+/*	    memcached.get(dbName, (err, data) => {
+		if (err) {
+		    console.log(err);
+		} else {
+		    console.log(data);
+		    let db = JSON.parse(data);
+		    cb(null, db[key])
+		}
+	    });
+*/
+		return cb();
     },
-    getUUID: () => this.readUUID(),
-});
-
+	getDiskUsage: (env, cb) => {
+	    console.log('getDiskUsage',env);
+	},
+    });
+    dbService.registerSyncAPI({
+        createReadStream:
+        (env, options) => {
+	    console.log('createReadStream');
+	},
+        getUUID: () => this.readUUID(),
+    });
+    
     console.log('Hooks installed');
 }
 

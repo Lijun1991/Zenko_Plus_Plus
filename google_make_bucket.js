@@ -15,8 +15,9 @@ function google_make_bucket (bucket)
     .catch((err) => {
         console.error('ERROR:', err);
     });
+    return true;
 }
 
-google_make_bucket("test_bucketblalabla");
+// google_make_bucket("test_bucketblalabla");
 
-// module.exports = makeBucket;
+module.exports = google_make_bucket;

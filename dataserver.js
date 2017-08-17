@@ -28,10 +28,10 @@ class MemcachedFileStore extends arsenal.storage.data.file.DataFileStore {
     }
 
     put(dataStream, size, log, callback) {
-    console.log('data put');
-    console.log('dataStream is:\n', dataStream);
-    console.log('size is:\n', size);
-    console.log('log is:\n',log);
+    console.log('data --- data put');
+    console.log('data --- dataStream is:\n', dataStream);
+    console.log('data --- size is:\n', size);
+    console.log('data --- log is:\n',log);
     }
 
     // var gcs = storage({

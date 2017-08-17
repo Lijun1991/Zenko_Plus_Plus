@@ -2,7 +2,6 @@
 
 const arsenal = require('arsenal');
 const werelogs = require('werelogs');
-
 const fs = require('fs');
 const assert = require('assert');
 const uuid = require('uuid');
@@ -17,6 +16,7 @@ const levelNet = arsenal.network.level;
 const WGM = require('../arsenal/lib/versioning/WriteGatheringManager');
 const WriteCache = require('../arsenal/lib/versioning/WriteCache');
 const VRP = require('../arsenal/lib/versioning/VersioningRequestProcessor');
+// const google_make_bucket = require('google_make_bucket');
 
 const ROOT_DB = 'rootDB';
 const SYNC_OPTIONS = { sync: true };
@@ -119,13 +119,20 @@ mdServer.initMetadataService = function () {
 	const writeCache = new WriteCache(wgm);
 	const vrp = new VRP(writeCache, wgm, this.versioning);
 
+
+	// if (dbService.registerAsyncAPI.put
 	dbService.registerAsyncAPI({
 		put: (env, key, value, options, cb) => {
-			console.log('\nvalue lenght\n', Object.keys(value).length, '\n\n');
-			console.log('metadata put hahahah\n', 'env is \n', env, '\n','key is \n', key, '\n', 'value is \n', value, '\n', 'options is \n', options, '\n', 'cb is \n', cb);
+			// console.log('metadata put hahahah\n');
+			console.log('metadata PUT inside registerAsyncAPI\n', 'key is \n', key, '\n', 'value is \n', value, '\n', 'options is \n', options, '\n', 'cb is \n', cb);
 			const dbName = env.subLevel.join(SUBLEVEL_SEP);
+			console.log('dbName is:',dbName);
 			vrp.put({ db: dbName, key, value, options },
 					env.requestLogger, cb);
+			// if (dbName === "users..bucket"){
+			// 	console.log('metadata put, dbname users..bucket, we are here....\n');
+			// 	google_make_bucket(key);
+			// }
 		},
 		del: (env, key, options, cb) => {
 			const dbName = env.subLevel.join(SUBLEVEL_SEP);
@@ -133,8 +140,10 @@ mdServer.initMetadataService = function () {
 					env.requestLogger, cb);
 		},
 		get: (env, key, options, cb) => {
-			console.log('metadata getttt hahahah\n', 'env is \n', env, '\n', 'key is \n', key,'\n', 'options is \n', options, '\n', 'cb is \n', cb);
+			// console.log('metadata getttt hahahah\n');
+			console.log('metadata GET inside registerAsyncAPI\n', 'key is \n', key,'\n', 'options is \n', options, '\n', 'cb is \n', cb);
 			const dbName = env.subLevel.join(SUBLEVEL_SEP);
+			console.log('dbName is:',dbName);
 			vrp.get({ db: dbName, key, options },
 					env.requestLogger, cb);
 		},

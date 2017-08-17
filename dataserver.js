@@ -4,6 +4,7 @@ const arsenal = require('arsenal');
 const werelogs = require('werelogs');
 const Memcached = require('memcached');
 var storage = require('@google-cloud/storage');
+const { config } = require('../s3/lib/Config.js');
 
 const SUBLEVEL_SEP = '::';
 const MEMCACHED_LIFETIME = 100000;
@@ -83,10 +84,10 @@ class MemcachedFileStore extends arsenal.storage.data.file.DataFileStore {
 const dataServer = new arsenal.network.rest.RESTServer(
     { bindAddress: '0.0.0.0',
       port: 9991,
-      dataStore: new MemcachedFileStore(
-          { dataPath: '/tmp',
-            log: logOptions }),
-      log: logOptions });
+      dataStore: new arsenal.storage.data.file.DataFileStore(
+        { dataPath: config.dataDaemon.dataPath,
+          log: config.log }),
+    log: config.log });
 
 dataServer.setup(err => {
     if (err) {

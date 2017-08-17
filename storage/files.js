@@ -23,6 +23,7 @@
 
 'use strict';
 
+
 function listFiles (bucketName) {
   // [START storage_list_files]
   // Imports the Google Cloud client library
@@ -458,6 +459,10 @@ const cli = require(`yargs`)
   .epilogue(`For more information, see https://cloud.google.com/storage/docs`)
   .help()
   .strict();
+
+module.exports = {
+  uploadFile: uploadFile
+}
 
 if (module === require.main) {
   cli.parse(process.argv.slice(2));

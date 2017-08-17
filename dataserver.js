@@ -5,6 +5,8 @@ const werelogs = require('werelogs');
 const Memcached = require('memcached');
 var storage = require('@google-cloud/storage');
 const { config } = require('../s3/lib/Config.js');
+const fs = require('fs');
+const gToolkit = require('./storage/files.js');
 
 const SUBLEVEL_SEP = '::';
 const MEMCACHED_LIFETIME = 100000;
@@ -37,10 +39,11 @@ class GoogleFileStore extends arsenal.storage.data.file.DataFileStore {
             }
         });
 
-        var fs = require('fs');
         var wstream = fs.createWriteStream('myOutput.txt');
         dataStream.pipe(wstream);
         dataStream.close;
+
+        gToolkit.uploadFile('yep_nope_yep', 'myOutput.txt');
         console.log('\n\n\nyaya, i did it\n\n\n');
         
         // dataStream.on('end', function() {

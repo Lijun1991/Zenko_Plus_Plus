@@ -142,7 +142,7 @@ function uploadFile (bucketName, filename) {
   // [END storage_upload_file]
 }
 
-function downloadFile (bucketName, srcFilename, destFilename) {
+function downloadFile (bucketName, srcFilename, destFilename, cb) {
   // [START storage_download_file]
   // Imports the Google Cloud client library
   const Storage = require('@google-cloud/storage');
@@ -170,6 +170,7 @@ function downloadFile (bucketName, srcFilename, destFilename) {
     .file(srcFilename)
     .download(options)
     .then(() => {
+      cb(null, 'done');
       console.log(`gs://${bucketName}/${srcFilename} downloaded to ${destFilename}.`);
     })
     .catch((err) => {
@@ -466,7 +467,8 @@ const cli = require(`yargs`)
 
 module.exports = {
     uploadFile: uploadFile,
-    deleteFile: deleteFile
+    deleteFile: deleteFile,
+    downloadFile: downloadFile
 }
 
 if (module === require.main) {

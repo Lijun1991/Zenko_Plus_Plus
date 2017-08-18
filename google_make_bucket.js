@@ -1,6 +1,7 @@
 const Storage = require('@google-cloud/storage');
 
-const projectId = 'my-first-project-175717';
+//const projectId = 'my-first-project-175717';
+const projectId = 'zenko-176903';
 
 const storage = Storage({projectId: projectId});
 

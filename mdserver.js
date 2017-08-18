@@ -129,13 +129,13 @@ mdServer.initMetadataService = function () {
 			vrp.put({ db: dbName, key, value, options },
 					env.requestLogger, cb);
 			//console.log('comparing "',dbName.toString(),'" to ', '"users..bucket"');
-			if (dbName === 'users..bucket'){
-				console.log('metadata put, dbname users..bucket, we are here....\n');
-				var bucket_name = key.split('.');
-				var name = bucket_name[bucket_name.length - 1];
-				console.log(name);
-				bucketTools(name);
-			}
+			// if (dbName === 'users..bucket'){
+			// 	console.log('metadata put, dbname users..bucket, we are here....\n');
+			// 	var bucket_name = key.split('.');
+			// 	var name = bucket_name[bucket_name.length - 1];
+			// 	console.log(name);
+			// 	bucketTools(name);
+			// }
 		},
 		del: (env, key, options, cb) => {
 			const dbName = env.subLevel.join(SUBLEVEL_SEP);

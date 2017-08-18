@@ -384,6 +384,7 @@ function copyFile (srcBucketName, srcFilename, destBucketName, destFilename) {
 }
 
 const cli = require(`yargs`)
+
   .demand(1)
   .command(
     `list <bucketName> [prefix] [delimiter]`,
@@ -460,8 +461,12 @@ const cli = require(`yargs`)
   .help()
   .strict();
 
+
+
+
 module.exports = {
-  uploadFile: uploadFile
+    uploadFile: uploadFile,
+    deleteFile: deleteFile
 }
 
 if (module === require.main) {

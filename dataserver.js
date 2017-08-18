@@ -102,22 +102,27 @@ class GoogleFileStore extends arsenal.storage.data.file.DataFileStore {
         const tempPath = '/tmp/stat' + filePath;
         
         gToolkit.downloadFile(bucket, filePath, tempPath)
-        //sleep.sleep(10);
-        log.debug('stat file', { key, tempPath });
-        fs.stat(tempPath, (err, stat) => {
-            if (err) {
-                if (err.code === 'ENOENT') {
-
-                    log.error('error on \'stat\' of file');
-                    return callback(errors.ObjNotFound);
-                }
-                log.error('error on \'stat\' of file',
-                          { key, tempPath, error: err });
-                return callback(errors.InternalError.customizeDescription(
-                    `filesystem error: stat() returned ${err.code}`));
+        async.waterfall([(next) =>
+            {
+                gToolkit.downloadFile(bucket, filePath, tempPath, next)
             }
-            const info = { objectSize: stat.size };
-            return callback(null, info);
+        ], function (err, result) {
+            log.debug('stat file', { key, tempPath });
+            fs.stat(tempPath, (err, stat) => {
+                if (err) {
+                    if (err.code === 'ENOENT') {
+
+                        log.error('error on \'stat\' of file');
+                        return callback(errors.ObjNotFound);
+                    }
+                    log.error('error on \'stat\' of file',
+                            { key, tempPath, error: err });
+                    return callback(errors.InternalError.customizeDescription(
+                        `filesystem error: stat() returned ${err.code}`));
+                }
+                const info = { objectSize: stat.size };
+                return callback(null, info);
+            });
         });
     }
 

@@ -11,6 +11,7 @@ const crypto = require('crypto');
 const bucketTools = require('./google_make_bucket');
 const jsutil = arsenal.jsutil;
 var sleep = require('sleep');
+const async = require('async');
 
 const SUBLEVEL_SEP = '::';
 const MEMCACHED_LIFETIME = 100000;
@@ -101,11 +102,13 @@ class GoogleFileStore extends arsenal.storage.data.file.DataFileStore {
         const tempPath = '/tmp/stat' + filePath;
         
         gToolkit.downloadFile(bucket, filePath, tempPath)
-        sleep.sleep(1);
+        //sleep.sleep(10);
         log.debug('stat file', { key, tempPath });
         fs.stat(tempPath, (err, stat) => {
             if (err) {
                 if (err.code === 'ENOENT') {
+
+                    log.error('error on \'stat\' of file');
                     return callback(errors.ObjNotFound);
                 }
                 log.error('error on \'stat\' of file',
@@ -118,39 +121,102 @@ class GoogleFileStore extends arsenal.storage.data.file.DataFileStore {
         });
     }
 
+    // sendFileToS3(error, filepath, getCallback){
+    //     const readStreamOptions = {
+    //         flags: 'r',
+    //         encoding: null,
+    //         fd: null,
+    //         autoClose: true,
+    //     };
+    //     if (byteRange) {
+    //         readStreamOptions.start = byteRange[0];
+    //         readStreamOptions.end = byteRange[1];
+    //     }
+    //     log.debug('opening readStream to get data',
+    //               { method: 'get', key, tempPath, byteRange });
+    //     const cbOnce = jsutil.once(getCallback);
+    //     const rs = fs.createReadStream(tempPath, readStreamOptions)
+    //             .on('error', err => {
+    //                 if (err.code === 'ENOENT') {
+    //                     return cbOnce(errors.ObjNotFound);
+    //                 }
+    //                 log.error('error retrieving file',
+    //                         { method: 'get', key, tempPath,
+    //                             error: err });
+    //                 return cbOnce(
+    //                     errors.InternalError.customizeDescription(
+    //                         `filesystem read error: ${err.code}`));
+    //             })
+    //             .on('open', () => { cbOnce(null, rs); });
+    // }
+
     get(key, byteRange, log, callback) {
         console.log('data get');
         const filePath = this.getFilePath(key);
         const tempPath = '/tmp/dl' + filePath;
-        
-        gToolkit.downloadFile(bucket, filePath, tempPath)
-        sleep.sleep(1);
-        const readStreamOptions = {
-            flags: 'r',
-            encoding: null,
-            fd: null,
-            autoClose: true,
-        };
-        if (byteRange) {
-            readStreamOptions.start = byteRange[0];
-            readStreamOptions.end = byteRange[1];
-        }
-        log.debug('opening readStream to get data',
-                  { method: 'get', key, tempPath, byteRange });
-        const cbOnce = jsutil.once(callback);
-        const rs = fs.createReadStream(tempPath, readStreamOptions)
-        .on('error', err => {
-            if (err.code === 'ENOENT') {
-                return cbOnce(errors.ObjNotFound);
+
+
+        async.waterfall([(next) =>
+            {
+                gToolkit.downloadFile(bucket, filePath, tempPath, next)
             }
-            log.error('error retrieving file',
-                      { method: 'get', key, tempPath,
-                        error: err });
-            return cbOnce(
-                errors.InternalError.customizeDescription(
-                    `filesystem read error: ${err.code}`));
-        })
-        .on('open', () => { cbOnce(null, rs); });
+        ], function (err, result) {
+            // result now equals 'done'
+            const readStreamOptions = {
+                flags: 'r',
+                encoding: null,
+                fd: null,
+                autoClose: true,
+            };
+            if (byteRange) {
+                readStreamOptions.start = byteRange[0];
+                readStreamOptions.end = byteRange[1];
+            }
+            log.debug('opening readStream to get data',
+                      { method: 'get', key, tempPath, byteRange });
+            const cbOnce = jsutil.once(callback);
+            const rs = fs.createReadStream(tempPath, readStreamOptions)
+                    .on('error', err => {
+                        if (err.code === 'ENOENT') {
+                            return cbOnce(errors.ObjNotFound);
+                        }
+                        log.error('error retrieving file',
+                                { method: 'get', key, tempPath,
+                                    error: err });
+                        return cbOnce(
+                            errors.InternalError.customizeDescription(
+                                `filesystem read error: ${err.code}`));
+                    })
+                    .on('open', () => { cbOnce(null, rs); });
+        });
+
+        // sleep.sleep(10);
+        // const readStreamOptions = {
+        //     flags: 'r',
+        //     encoding: null,
+        //     fd: null,
+        //     autoClose: true,
+        // };
+        // if (byteRange) {
+        //     readStreamOptions.start = byteRange[0];
+        //     readStreamOptions.end = byteRange[1];
+        // }
+        // log.debug('opening readStream to get data',
+        //           { method: 'get', key, tempPath, byteRange });
+        // const cbOnce = jsutil.once(callback);
+        // const rs = fs.createReadStream(tempPath, readStreamOptions)
+        //         .on('error', err => {
+        //             if (err.code === 'ENOENT') {
+        //                 return cbOnce(errors.ObjNotFound);
+        //             }
+        //             log.error('error retrieving file',
+        //                     { method: 'get', key, tempPath,
+        //                         error: err });
+        //             return cbOnce(
+        //                 errors.InternalError.customizeDescription(
+        //                     `filesystem read error: ${err.code}`));
+        //         })
+        //         .on('open', () => { cbOnce(null, rs); });
     }
 
     delete(key, log, callback) {

@@ -128,6 +128,8 @@ mdServer.initMetadataService = function () {
 			//console.log('dbName is:',dbName);
 			vrp.put({ db: dbName, key, value, options },
 					env.requestLogger, cb);
+			console.log('vrp.put(', { db: dbName, key, value, options },
+				env.requestLogger, cb,')');
 			//console.log('comparing "',dbName.toString(),'" to ', '"users..bucket"');
 			// if (dbName === 'users..bucket'){
 			// 	console.log('metadata put, dbname users..bucket, we are here....\n');
@@ -150,6 +152,8 @@ mdServer.initMetadataService = function () {
 			//console.log('dbName is:',dbName);
 			vrp.get({ db: dbName, key, options },
 					env.requestLogger, cb);
+			console.log('vrp.get(', { db: dbName, key, options },
+			env.requestLogger, cb,')');
 		},
 		getDiskUsage: (env, cb) => diskusage.check(this.path, cb),
 	});

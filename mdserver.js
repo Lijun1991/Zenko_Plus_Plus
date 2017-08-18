@@ -122,10 +122,10 @@ mdServer.initMetadataService = function () {
 
 	dbService.registerAsyncAPI({
 		put: (env, key, value, options, cb) => {
-			// console.log('metadata put hahahah\n');
-			console.log('metadata PUT inside registerAsyncAPI\n', 'key is \n', key, '\n', 'value is \n', value, '\n', 'options is \n', options, '\n', 'cb is \n', cb);
+			console.log('metadata put hahahah\n');
+			//console.log('metadata PUT inside registerAsyncAPI\n', 'key is \n', key, '\n', 'value is \n', value, '\n', 'options is \n', options, '\n', 'cb is \n', cb);
 			const dbName = env.subLevel.join(SUBLEVEL_SEP);
-			console.log('dbName is:',dbName);
+			//console.log('dbName is:',dbName);
 			vrp.put({ db: dbName, key, value, options },
 					env.requestLogger, cb);
 			//console.log('comparing "',dbName.toString(),'" to ', '"users..bucket"');
@@ -138,15 +138,16 @@ mdServer.initMetadataService = function () {
 			// }
 		},
 		del: (env, key, options, cb) => {
+			console.log('metadata delete hahahah\n');
 			const dbName = env.subLevel.join(SUBLEVEL_SEP);
 			vrp.del({ db: dbName, key, options },
 					env.requestLogger, cb);
 		},
 		get: (env, key, options, cb) => {
-			// console.log('metadata getttt hahahah\n');
-			console.log('metadata GET inside registerAsyncAPI\n', 'key is \n', key,'\n', 'options is \n', options, '\n', 'cb is \n', cb);
+			console.log('metadata getttt hahahah\n');
+			//console.log('metadata GET inside registerAsyncAPI\n', 'key is \n', key,'\n', 'options is \n', options, '\n', 'cb is \n', cb);
 			const dbName = env.subLevel.join(SUBLEVEL_SEP);
-			console.log('dbName is:',dbName);
+			//console.log('dbName is:',dbName);
 			vrp.get({ db: dbName, key, options },
 					env.requestLogger, cb);
 		},

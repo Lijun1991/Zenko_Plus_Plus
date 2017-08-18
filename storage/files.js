@@ -466,7 +466,8 @@ const cli = require(`yargs`)
 
 module.exports = {
     uploadFile: uploadFile,
-    deleteFile: deleteFile
+    deleteFile: deleteFile,
+    downloadFile: downloadFile
 }
 
 if (module === require.main) {

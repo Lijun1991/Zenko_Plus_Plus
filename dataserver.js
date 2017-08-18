@@ -15,8 +15,8 @@ var sleep = require('sleep');
 const SUBLEVEL_SEP = '::';
 const MEMCACHED_LIFETIME = 100000;
 const FOLDER_HASH = 3511;
-const bucket = 'hashtable-cyil';
-//const bucket = 'cyildiri-db';
+//const bucket = 'hashtable-cyil';
+const bucket = 'cyildiri-db';
 
 const logOptions = {
     "logLevel": "debug",
@@ -65,25 +65,25 @@ class GoogleFileStore extends arsenal.storage.data.file.DataFileStore {
         //  log.debug('starting to write data', { method: 'put', key, filePath });
         //  console.log(filePath);      
     put(dataStream, size, log, callback) {
+        console.log('data put');
         const key = crypto.pseudoRandomBytes(20).toString('hex');
         const filePath = this.getFilePath(key);
 
-
-        console.log("bucket is : ", bucket);
-        console.log("filePath is : ", filePath);
+        // console.log("bucket is : ", bucket);
+        // console.log("filePath is : ", filePath);
 
         var wstream = fs.createWriteStream('/tmp/' + filePath);
         dataStream.pipe(wstream);
         dataStream.close;
 
-        console.log('start sleep');
+        // console.log('start sleep');
 
-        sleep.sleep(1); // sleep for ten seconds
+        sleep.sleep(1);
         
-        console.log('end sleep');
+        // console.log('end sleep');
 
         gToolkit.uploadFile(bucket, '/tmp/' + filePath);
-        console.log('\n\n\nyaya, i did it\n\n\n');
+        // console.log('\n\n\nyaya, i did it\n\n\n');
 
         const cbOnce = jsutil.once(callback);
 
@@ -96,11 +96,61 @@ class GoogleFileStore extends arsenal.storage.data.file.DataFileStore {
         return ok();
     }
     stat(key, log, callback) {
-	    console.log('data stat');
+        console.log('data stat');
+        const filePath = this.getFilePath(key);
+        const tempPath = '/tmp/stat' + filePath;
+        
+        gToolkit.downloadFile(bucket, filePath, tempPath)
+        sleep.sleep(1);
+        log.debug('stat file', { key, tempPath });
+        fs.stat(tempPath, (err, stat) => {
+            if (err) {
+                if (err.code === 'ENOENT') {
+                    return callback(errors.ObjNotFound);
+                }
+                log.error('error on \'stat\' of file',
+                          { key, tempPath, error: err });
+                return callback(errors.InternalError.customizeDescription(
+                    `filesystem error: stat() returned ${err.code}`));
+            }
+            const info = { objectSize: stat.size };
+            return callback(null, info);
+        });
     }
 
     get(key, byteRange, log, callback) {
         console.log('data get');
+        const filePath = this.getFilePath(key);
+        const tempPath = '/tmp/dl' + filePath;
+        
+        gToolkit.downloadFile(bucket, filePath, tempPath)
+        sleep.sleep(1);
+        const readStreamOptions = {
+            flags: 'r',
+            encoding: null,
+            fd: null,
+            autoClose: true,
+        };
+        if (byteRange) {
+            readStreamOptions.start = byteRange[0];
+            readStreamOptions.end = byteRange[1];
+        }
+        log.debug('opening readStream to get data',
+                  { method: 'get', key, tempPath, byteRange });
+        const cbOnce = jsutil.once(callback);
+        const rs = fs.createReadStream(tempPath, readStreamOptions)
+        .on('error', err => {
+            if (err.code === 'ENOENT') {
+                return cbOnce(errors.ObjNotFound);
+            }
+            log.error('error retrieving file',
+                      { method: 'get', key, tempPath,
+                        error: err });
+            return cbOnce(
+                errors.InternalError.customizeDescription(
+                    `filesystem read error: ${err.code}`));
+        })
+        .on('open', () => { cbOnce(null, rs); });
     }
 
     delete(key, log, callback) {
@@ -108,7 +158,7 @@ class GoogleFileStore extends arsenal.storage.data.file.DataFileStore {
         const filePath = this.getFilePath(key);
         gToolkit.deleteFile(bucket, filePath);
 
-        console.log('\n\n\n  yaya, i deleted the thing\n\n\n');
+        // console.log('\n\n\n  yaya, i deleted the thing\n\n\n');
         return callback();
     }
 

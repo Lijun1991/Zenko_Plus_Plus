@@ -10,10 +10,13 @@ const gToolkit = require('./storage/files.js');
 const crypto = require('crypto');
 const bucketTools = require('./google_make_bucket');
 const jsutil = arsenal.jsutil;
+var sleep = require('sleep');
 
 const SUBLEVEL_SEP = '::';
 const MEMCACHED_LIFETIME = 100000;
 const FOLDER_HASH = 3511;
+const bucket = 'hashtable-cyil';
+//const bucket = 'cyildiri-db';
 
 const logOptions = {
     "logLevel": "debug",
@@ -65,7 +68,6 @@ class GoogleFileStore extends arsenal.storage.data.file.DataFileStore {
         const key = crypto.pseudoRandomBytes(20).toString('hex');
         const filePath = this.getFilePath(key);
 
-        const bucket = 'hashtable-cyil';
 
         console.log("bucket is : ", bucket);
         console.log("filePath is : ", filePath);
@@ -73,6 +75,12 @@ class GoogleFileStore extends arsenal.storage.data.file.DataFileStore {
         var wstream = fs.createWriteStream('/tmp/' + filePath);
         dataStream.pipe(wstream);
         dataStream.close;
+
+        console.log('start sleep');
+
+        sleep.sleep(1); // sleep for ten seconds
+        
+        console.log('end sleep');
 
         gToolkit.uploadFile(bucket, '/tmp/' + filePath);
         console.log('\n\n\nyaya, i did it\n\n\n');
@@ -98,7 +106,6 @@ class GoogleFileStore extends arsenal.storage.data.file.DataFileStore {
     delete(key, log, callback) {
 	    console.log('data delete');
         const filePath = this.getFilePath(key);
-        const bucket = 'hashtable-cyil';
         gToolkit.deleteFile(bucket, filePath);
 
         console.log('\n\n\n  yaya, i deleted the thing\n\n\n');

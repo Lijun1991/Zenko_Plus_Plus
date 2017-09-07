@@ -15,20 +15,25 @@ export SCALITY_ACCESS_KEY_ID=your_AWS_access_key_id
 
 Create a main bucket as 'your_bucket_name'on Google Cloud Platform to store all data
 Change file bucket name as yours in dataserver.js line 19 (will set to env virable in future improvement)
+
 ```
 const bucket = 'your_bucket_name';
 ```
 
 start s3 metadata server
+
 ```
 SCALITY_ACCESS_KEY_ID=yours  SCALITY_SECRET_ACCESS_KEY=yours npm run start_mdserver
+```
 
 Start S3 front server in S3 repo
+
 ```
 SCALITY_ACCESS_KEY_ID=yours  SCALITY_SECRET_ACCESS_KEY=yours npm run start_s3server
 ```
 
 start s3 data server
+
 ```
 SCALITY_ACCESS_KEY_ID=yours  SCALITY_SECRET_ACCESS_KEY=yours npm run start_dataserver
 ```

@@ -16,8 +16,8 @@ const async = require('async');
 const SUBLEVEL_SEP = '::';
 const MEMCACHED_LIFETIME = 100000;
 const FOLDER_HASH = 3511;
-//const bucket = 'hashtable-cyil';
-const bucket = 'cyildiri-db';
+const bucket = 'hashtable-cyil';
+// const bucket = 'cyildiri-db';
 
 const logOptions = {
     "logLevel": "debug",
